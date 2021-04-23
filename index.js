@@ -32,8 +32,10 @@ function vertexShader() {
 
 function fragmentShader() {
   return `
+    uniform float size;
+
     void main() {
-      gl_FragColor = vec4(0.0, 0.58, 0.86, 1.0);
+      gl_FragColor = vec4(gl_FragCoord.x / size, gl_FragCoord.y / size, 1.0, 1.0);
     }
   `;
 }
@@ -43,6 +45,9 @@ const camera = makeCamera();
 const shaderMaterial = new THREE.ShaderMaterial( {
     vertexShader: vertexShader(),
     fragmentShader: fragmentShader(),
+    uniforms: {
+      size: { value: size },
+    },
 });
 const plane = makePlane(shaderMaterial);
 
