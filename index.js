@@ -1,12 +1,6 @@
 import * as THREE from 'https://unpkg.com/three@0.127.0/build/three.module.js';
 
-const size = Math.min(window.innerWidth, window.innerHeight);
-
-const renderer = new THREE.WebGLRenderer();
-renderer.setSize(size, size);
-document.body.appendChild(renderer.domElement);
-
-function makeCamera() {
+function makeCamera(size) {
   const camera = new THREE.OrthographicCamera(-size/2, size/2, size/2, -size/2, 1, 10);
   camera.rotation.z = Math.PI;
   camera.position.set(0, 0, 5);
@@ -15,49 +9,54 @@ function makeCamera() {
   return camera;
 }
 
-function makePlane(shaderMaterial) {
+function makePlane(size, shaderMaterial) {
   return new THREE.Mesh(
     new THREE.PlaneGeometry(size, size),
     shaderMaterial,
   );
 }
 
-function vertexShader() {
-  return `
-    void main() {
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(position.x, position.y, position.z, 1.0);
-    }
-  `;
-}
+const noCache = {
+  headers: { 'Cache-Control': 'no-cache' },
+};
+const fragShaderPromise = fetch('fragment-shader.glsl', noCache)
+  .then(response => response.text());
+const vertexShaderPromise = fetch('vertex-shader.glsl', noCache)
+  .then(response => response.text());
 
-function fragmentShader() {
-  return `
-    uniform float size;
+Promise.all([fragShaderPromise, vertexShaderPromise]).then(([fragmentShader, vertexShader]) => {
+  console.log(fragmentShader);
 
-    void main() {
-      gl_FragColor = vec4(gl_FragCoord.x / size, gl_FragCoord.y / size, 1.0, 1.0);
-    }
-  `;
-}
+  const size = Math.min(window.innerWidth, window.innerHeight);
 
-const camera = makeCamera();
+  const renderer = new THREE.WebGLRenderer();
 
-const shaderMaterial = new THREE.ShaderMaterial( {
-    vertexShader: vertexShader(),
-    fragmentShader: fragmentShader(),
-    uniforms: {
-      size: { value: size },
-    },
-});
-const plane = makePlane(shaderMaterial);
+  renderer.setSize(size, size);
+  document.body.appendChild(renderer.domElement);
 
-const scene = new THREE.Scene();
-scene.add(camera);
-scene.add(plane);
+  const scene = new THREE.Scene();
 
-function render() {
+  const camera = makeCamera(size);
+  scene.add(camera);
+
+  const shaderMaterial = new THREE.ShaderMaterial( {
+      vertexShader,
+      fragmentShader,
+      uniforms: {
+        size: { value: size },
+        timeMs: { value: 0 },
+      },
+  });
+  const plane = makePlane(size, shaderMaterial);
+  scene.add(plane);
+
+  const startTime = new Date();
+
+  function render() {
+    shaderMaterial.uniforms.timeMs.value = new Date() - startTime;
     requestAnimationFrame(render);
     renderer.render(scene, camera);
-}
+  }
 
-render();
+  render();
+});
