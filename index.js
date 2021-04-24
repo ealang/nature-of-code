@@ -16,6 +16,11 @@ function makePlane(width, height, shaderMaterial) {
   );
 }
 
+function loadTexture(path) {
+  const loader = new THREE.TextureLoader();
+  return loader.load(path);
+}
+
 const noCache = {
   headers: { 'Cache-Control': 'no-cache' },
 };
@@ -41,13 +46,16 @@ Promise.all([fragShaderPromise, vertexShaderPromise]).then(([fragmentShader, ver
   const camera = makeCamera(width, height);
   scene.add(camera);
 
+  const texture = loadTexture('bayer.png');
+
   const shaderMaterial = new THREE.ShaderMaterial( {
-      vertexShader,
-      fragmentShader,
-      uniforms: {
-        resolution: { value: [width, height] },
-        timeMs: { value: 0 },
-      },
+    vertexShader,
+    fragmentShader,
+    uniforms: {
+      u_resolution: { value: [width, height] },
+      u_timeMs: { value: 0 },
+      u_texture: { value: texture },
+    },
   });
   const plane = makePlane(width, height, shaderMaterial);
   scene.add(plane);
@@ -55,7 +63,8 @@ Promise.all([fragShaderPromise, vertexShaderPromise]).then(([fragmentShader, ver
   const startTime = new Date();
 
   function render() {
-    shaderMaterial.uniforms.timeMs.value = new Date() - startTime;
+    shaderMaterial.uniforms.u_timeMs.value = new Date() - startTime;
+
     requestAnimationFrame(render);
     renderer.render(scene, camera);
   }

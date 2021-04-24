@@ -1,8 +1,14 @@
-uniform vec2 resolution;
-uniform float timeMs;
+uniform vec2 u_resolution;
+uniform float u_timeMs;
+uniform sampler2D u_texture;
 
 void main() {
-    vec2 uv = vec2(gl_FragCoord) / resolution;
-    float b = cos(timeMs/1000.0 * 3.14 * 0.5) * 0.5 + 0.5;
-    gl_FragColor = vec4(uv.x, uv.y, b, 1.0);
+    vec2 uv = vec2(gl_FragCoord) / u_resolution;
+    lowp vec4 tex = texture2D(u_texture, uv);
+
+    float r = cos(u_timeMs/1000.0 * 3.14 * 0.5) * 0.5 + 0.5;
+    float g = uv.y;
+    float b = tex.b;
+
+    gl_FragColor = vec4(r, g, b, 1.0);
 }
