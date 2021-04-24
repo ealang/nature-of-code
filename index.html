@@ -5,12 +5,46 @@
   <title>nature-of-code</title>
   <style>
     body {
-      background-color: #333;
       margin: 0;
     }
   </style>
 </head>
 <body>
-  <script type="module" src="index.js"></script>
+  <script>
+    async function mainIndex() {
+      const response = await fetch('https://api.github.com/repos/ealang/nature-of-code/contents/demos');
+      const data = await response.json();
+
+      const h1 = document.createElement('h1');
+      h1.innerText = "Nature of Code Demos"
+      document.body.appendChild(h1);
+
+      const ul = document.createElement('ul');
+      for (let file of data) {
+        const li = document.createElement('li');
+        li.innerHTML = `<a href="?demo=${file.name}">${file.name}</a></li>`;
+        ul.appendChild(li);
+      }
+     document.body.appendChild(ul);
+    }
+
+    function demoIndex(demoName) {
+      var script = document.createElement('script');
+      script.setAttribute('src', `demos/${demoName}/index.js?v=${Math.random()}`);
+      script.setAttribute('type', 'module');
+      document.head.appendChild(script);
+    }
+
+    (async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const demoParam = urlParams.get('demo');
+
+      if (!demoParam) {
+         await mainIndex();
+      } else {
+         demoIndex(demoParam);
+      }
+    })()
+  </script>
 </body>
 </html>
