@@ -1,23 +1,19 @@
 uniform vec2 u_resolution;
-uniform float u_timeSec;
 uniform float u_gridSize;
-uniform float u_animFreq;
-
-#define PI2 (3.14 * 2.0)
+uniform float u_gradients[128];
 
 float interpolate(float v1, float v2, float mix) {
     // https://en.wikipedia.org/wiki/Cubic_Hermite_spline
     return v1 + (v2 - v1) * (3.0 - mix * 2.0) * mix * mix;
 }
 
-vec2 gridVec(float x, float y) {
-    float i = cos(x + cos(y)) + u_timeSec * u_animFreq * PI2;
-    return vec2(cos(i), sin(i));
+vec2 gridVecLookup(int i) {
+    float angle = u_gradients[i % u_gradients.length()];
+    return vec2(cos(angle), sin(angle));
 }
 
-float dotProdDiff(vec2 grid, vec2 p) {
-    vec2 gradient = gridVec(grid.x, grid.y);
-    vec2 delta = p - grid;
+float dotProdDiff(vec2 gridPt, vec2 samplePt, vec2 gradient) {
+    vec2 delta = samplePt - gridPt;
     return dot(gradient, delta);
 }
 
@@ -29,26 +25,30 @@ void main() {
         gl_FragCoord.y * scale
     );
 
+    // Find grid cell
+    int width = int(ceil(u_resolution.x * scale));
+    int ix = int(point.x);
+    int iy = int(point.y);
+    int i = ix + iy * width;
+
     // Get coordinates of surrounding grid points
-    float ix = float(int(point.x));
-    float iy = float(int(point.y));
-    vec2 gridBl = vec2(ix, iy);
-    vec2 gridBr = vec2(ix + 1.0, iy);
-    vec2 gridTl = vec2(ix, iy + 1.0);
-    vec2 gridTr = vec2(ix + 1.0, iy + 1.0);
+    vec2 gridBl = vec2(float(ix), float(iy));
+    vec2 gridBr = gridBl + vec2(1.0, 0.0);
+    vec2 gridTl = gridBl + vec2(0.0, 1.0);
+    vec2 gridTr = gridTl + vec2(1.0, 0.0);
 
     // Interpolate gradient dot products
-    float dx = point.x - ix;
-    float dy = point.y - iy;
+    float dx = point.x - gridBl.x;
+    float dy = point.y - gridBl.y;
 
     float valueBottom = interpolate(
-         dotProdDiff(gridBl, point),
-         dotProdDiff(gridBr, point),
+         dotProdDiff(gridBl, point, gridVecLookup(i)),
+         dotProdDiff(gridBr, point, gridVecLookup(i + 1)),
          dx
      );
     float valueTop = interpolate(
-         dotProdDiff(gridTl, point),
-         dotProdDiff(gridTr, point),
+         dotProdDiff(gridTl, point, gridVecLookup(i + width)),
+         dotProdDiff(gridTr, point, gridVecLookup(i + width + 1)),
          dx
     );
     float value = interpolate(valueBottom, valueTop, dy);
