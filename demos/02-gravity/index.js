@@ -2,6 +2,7 @@ import basicFragmentSetup from '../../lib/basic-fragment-setup.js';
 
 const GRAVITY = 0.0001;
 const DEFAULT_DENSITY = 20;
+const NUM_BODIES = 15;
 
 function circleMass(radius, density) {
   return Math.PI * radius * radius * density;
@@ -115,7 +116,7 @@ const sizeY = resolutionY / resolution;
 
 // Add random bodies
 const bodies = [];
-for (var i = 0; i < 20; ++i) {
+for (var i = 0; i < NUM_BODIES; ++i) {
   const radius = Math.random() < 0.5 ? 
     Math.random() * 0.1 :
     Math.random() * 0.02;
@@ -139,7 +140,6 @@ basicFragmentSetup(
     u_bodies: fragValue(bodies.map(bodyToUniform)),
     u_gravity: fragValue(5),
     u_colorScale: fragValue(0.005),
-    u_numBodies: fragValue(bodies.length),
     u_numContourLines: fragValue(5),
     u_contourForceCutoff: fragValue(300),
     u_contourWidth: fragValue(0.005),

@@ -1,7 +1,6 @@
 uniform vec2 u_resolution;
 uniform float u_timeSec;
 uniform float u_gravity;
-uniform int u_numBodies;
 uniform int u_numContourLines;
 uniform float u_contourWidth;
 uniform float u_contourForceCutoff;
@@ -13,8 +12,14 @@ struct Body {
   float mass;
 };
 
-#define MAX_NUM_BODIES 20
-uniform Body u_bodies[MAX_NUM_BODIES];
+#define NUM_BODIES 15
+uniform Body u_bodies[NUM_BODIES];
+
+float _tanh(float x) {
+    #define e 2.71828
+    float e2x = pow(e, 2.0 * x);
+    return (e2x - 1.0) / (e2x + 1.0);
+}
 
 // Get force vector applied to object 1
 vec2 gravAttraction(vec2 pos1, float mass1, vec2 pos2, float mass2) {
@@ -27,7 +32,7 @@ vec2 gravAttraction(vec2 pos1, float mass1, vec2 pos2, float mass2) {
 
 float forceAt(vec2 pos) {
     vec2 force = vec2(0.0, 0.0);
-    for (int i = 0; i < u_numBodies; ++i) {
+    for (int i = 0; i < NUM_BODIES; ++i) {
         Body body = u_bodies[i];
         vec2 forcePart = gravAttraction(pos, 1.0, body.position, body.mass);
         force += forcePart;
@@ -39,7 +44,7 @@ float forceAt(vec2 pos) {
 float forceGradientAt(vec2 pos) {
     vec2 gradient = vec2(0.0, 0.0);
 
-    for (int i = 0; i < u_numBodies; ++i) {
+    for (int i = 0; i < NUM_BODIES; ++i) {
         Body body = u_bodies[i];
 
         vec2 delta = body.position - pos;
@@ -71,7 +76,7 @@ vec4 colorForce(float force, float forceGradient) {
         }
     }
 
-    float color = tanh(force * u_colorScale);
+    float color = _tanh(force * u_colorScale);
     return vec4(color, color, color, 1.0);
 }
 
@@ -79,7 +84,7 @@ void main() {
     vec2 uv = vec2(gl_FragCoord) / u_resolution;
     
     // Check for overlap with any bodies
-    for (int i = 0; i < u_numBodies; ++i) {
+    for (int i = 0; i < NUM_BODIES; ++i) {
         if (distance(uv, u_bodies[i].position) <= u_bodies[i].radius) {
             gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
             return;
