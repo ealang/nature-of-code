@@ -147,5 +147,8 @@ basicFragmentSetup(
       u_resolution: fragValue([resolution, resolution]),
     },
     onUpdate,
+    defines: {
+      NUM_BODIES,
+    },
   },
 );

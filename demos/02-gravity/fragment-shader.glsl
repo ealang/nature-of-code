@@ -12,7 +12,6 @@ struct Body {
   float mass;
 };
 
-#define NUM_BODIES 15
 uniform Body u_bodies[NUM_BODIES];
 
 float _tanh(float x) {

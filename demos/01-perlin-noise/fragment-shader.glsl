@@ -1,6 +1,6 @@
 uniform vec2 u_resolution;
 uniform float u_gridSize;
-uniform float u_gradients[128];
+uniform float u_gradients[NUM_GRADIENTS];
 
 float interpolate(float v1, float v2, float mix) {
     // https://en.wikipedia.org/wiki/Cubic_Hermite_spline
@@ -8,7 +8,7 @@ float interpolate(float v1, float v2, float mix) {
 }
 
 vec2 gridVecLookup(int i) {
-    float angle = u_gradients[i % u_gradients.length()];
+    float angle = u_gradients[i % NUM_GRADIENTS];
     return vec2(cos(angle), sin(angle));
 }
 

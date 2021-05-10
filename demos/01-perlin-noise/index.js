@@ -19,5 +19,8 @@ basicFragmentSetup(
       u_gradients: { value: [...gradients] },
     },
     onUpdate,
+    defines: {
+      NUM_GRADIENTS,
+    },
   },
 );
