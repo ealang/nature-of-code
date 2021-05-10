@@ -7,6 +7,8 @@ const texture = loader.load('images/noc_print.jpeg');
 basicFragmentSetup(
   'demos/00-hello-world/fragment-shader.glsl',
   {
-    u_texture: { value: texture },
+    uniforms: {
+      u_texture: { value: texture },
+    },
   },
 );

@@ -137,13 +137,15 @@ const fragValue = value => ({value});
 basicFragmentSetup(
   'demos/02-gravity/fragment-shader.glsl',
   {
-    u_bodies: fragValue(bodies.map(bodyToUniform)),
-    u_gravity: fragValue(5),
-    u_colorScale: fragValue(0.005),
-    u_numContourLines: fragValue(5),
-    u_contourForceCutoff: fragValue(300),
-    u_contourWidth: fragValue(0.005),
-    u_resolution: fragValue([resolution, resolution]),
+    uniforms: {
+      u_bodies: fragValue(bodies.map(bodyToUniform)),
+      u_gravity: fragValue(5),
+      u_colorScale: fragValue(0.005),
+      u_numContourLines: fragValue(5),
+      u_contourForceCutoff: fragValue(300),
+      u_contourWidth: fragValue(0.005),
+      u_resolution: fragValue([resolution, resolution]),
+    },
+    onUpdate,
   },
-  onUpdate,
 );

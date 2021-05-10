@@ -14,8 +14,10 @@ function onUpdate(time, uniforms) {
 basicFragmentSetup(
   'demos/01-perlin-noise/fragment-shader.glsl',
   {
-    u_gridSize: { value: 0.08 },
-    u_gradients: { value: [...gradients] },
+    uniforms: {
+      u_gridSize: { value: 0.08 },
+      u_gradients: { value: [...gradients] },
+    },
+    onUpdate,
   },
-  onUpdate,
 );
