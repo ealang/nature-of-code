@@ -1,4 +1,4 @@
-uniform uint u_iteration;
+uniform int u_iteration;
 uniform vec2 u_resolution;
 uniform float u_timeSec;
 uniform sampler2D u_buffer;
@@ -6,12 +6,12 @@ uniform sampler2D u_textureSeed;
 
 bool initialState(vec2 point) {
     vec2 uv = mod(point / float(TEXTURE_RES), 1.0);
-    return texture(u_textureSeed, uv).r > 0.5;
+    return texture2D(u_textureSeed, uv).r > 0.5;
 }
 
 bool readState(vec2 point) {
     vec2 uv = mod(point / u_resolution, 1.0);
-    return texture(u_buffer, uv).r > 0.5;
+    return texture2D(u_buffer, uv).r > 0.5;
 }
 
 vec4 encodeValue(bool value) {
@@ -49,10 +49,11 @@ bool nextState(vec2 point) {
 }
 
 void main() {
+
     vec2 point = vec2(gl_FragCoord);
 
     bool state;
-    if (u_iteration == 0u) {
+    if (u_iteration == 0) {
         state = initialState(point);
     } else {
         state = nextState(point);

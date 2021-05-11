@@ -1,35 +1,45 @@
+#define PI2 6.283
+#define E 2.71828
+
 uniform vec2 u_resolution;
 uniform float u_gridSize;
-uniform float u_gradients[NUM_GRADIENTS];
+uniform float u_timeSec;
+uniform float u_animFreqHz;
+
+float _tanh(float x) {
+    float e2x = pow(E, 2.0 * x);
+    return (e2x - 1.0) / (e2x + 1.0);
+}
 
 float interpolate(float v1, float v2, float mix) {
     // https://en.wikipedia.org/wiki/Cubic_Hermite_spline
     return v1 + (v2 - v1) * (3.0 - mix * 2.0) * mix * mix;
 }
 
-vec2 gridVecLookup(int i) {
-    float angle = u_gradients[i % NUM_GRADIENTS];
-    return vec2(cos(angle), sin(angle));
+float rand(vec2 point){
+    // https://thebookofshaders.com/10/
+    return fract(sin(dot(point.xy, vec2(12.9898, 78.233))) * 43758.5453);
 }
 
-float dotProdDiff(vec2 gridPt, vec2 samplePt, vec2 gradient) {
+float gradientDot(vec2 gridPt, vec2 samplePt) {
+    float angle = (rand(gridPt) + u_timeSec * u_animFreqHz) * PI2;
+    vec2 gradient = vec2(cos(angle), sin(angle));
+
     vec2 delta = samplePt - gridPt;
     return dot(gradient, delta);
 }
 
 void main() {
     // Get sample point coordinates
-    float scale = 1.0 / (min(u_resolution.x, u_resolution.y) * u_gridSize);
+    float scale = 1.0 / (max(u_resolution.x, u_resolution.y) * u_gridSize);
     vec2 point = vec2(
         gl_FragCoord.x * scale,
         gl_FragCoord.y * scale
     );
 
     // Find grid cell
-    int width = int(ceil(u_resolution.x * scale));
     int ix = int(point.x);
     int iy = int(point.y);
-    int i = ix + iy * width;
 
     // Get coordinates of surrounding grid points
     vec2 gridBl = vec2(float(ix), float(iy));
@@ -42,19 +52,19 @@ void main() {
     float dy = point.y - gridBl.y;
 
     float valueBottom = interpolate(
-         dotProdDiff(gridBl, point, gridVecLookup(i)),
-         dotProdDiff(gridBr, point, gridVecLookup(i + 1)),
+         gradientDot(gridBl, point),
+         gradientDot(gridBr, point),
          dx
      );
     float valueTop = interpolate(
-         dotProdDiff(gridTl, point, gridVecLookup(i + width)),
-         dotProdDiff(gridTr, point, gridVecLookup(i + width + 1)),
+         gradientDot(gridTl, point),
+         gradientDot(gridTr, point),
          dx
     );
     float value = interpolate(valueBottom, valueTop, dy);
 
     // Amplify values
-    value = clamp(value * 2.5, -1.0, 1.0);
+    value = _tanh(value * 2.8);
 
     // Compute color
     float r = 0.0;
