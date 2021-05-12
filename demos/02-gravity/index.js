@@ -81,7 +81,7 @@ function bodyToUniform(body) {
 }
  
 var lastTime = null;
-function onUpdate(time, uniforms) {
+function onRender(time, uniforms) {
   if (lastTime) {
     const dt = time - lastTime;
 
@@ -146,7 +146,7 @@ basicFragmentSetup(
       u_contourWidth: fragValue(0.005),
       u_resolution: fragValue([resolution, resolution]),
     },
-    onUpdate,
+    onRender,
     defines: {
       NUM_BODIES,
     },
