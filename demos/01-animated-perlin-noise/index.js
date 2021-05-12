@@ -1,7 +1,7 @@
 import basicFragmentSetup from '../../lib/basic-fragment-setup.js';
 
 basicFragmentSetup(
-  'demos/01-perlin-noise/fragment-shader.glsl',
+  'demos/01-animated-perlin-noise/fragment-shader.glsl',
   {
     uniforms: {
       u_gridSize: { value: 0.05 },

@@ -17,7 +17,7 @@
       const data = await response.json();
 
       const h1 = document.createElement('h1');
-      h1.innerText = "Nature of Code Demos"
+      h1.innerText = "Nature of Code Shader Demos"
       document.body.appendChild(h1);
 
       const ul = document.createElement('ul');
@@ -26,7 +26,15 @@
         li.innerHTML = `<a href="?demo=${file.name}">${file.name}</a></li>`;
         ul.appendChild(li);
       }
-     document.body.appendChild(ul);
+      document.body.appendChild(ul);
+
+      const div = document.createElement('div');
+      div.innerHTML = `
+        <div>Inspired by <a href="https://natureofcode.com/">The Nature of Code</a></div>
+        <div><a href="https://github.com/ealang/nature-of-code">github.com/ealang/nature-of-code</a></div>
+      `;
+
+      document.body.appendChild(div);
     }
 
     function demoIndex(demoName) {
