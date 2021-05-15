@@ -39,7 +39,7 @@
 
     function demoIndex(demoName) {
       var script = document.createElement('script');
-      script.setAttribute('src', `demos/${demoName}/index.js?v=${Math.random()}`);
+      script.setAttribute('src', `demos/${demoName}/index.js`);
       script.setAttribute('type', 'module');
       document.head.appendChild(script);
     }

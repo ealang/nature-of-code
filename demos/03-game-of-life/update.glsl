@@ -1,12 +1,10 @@
 uniform int u_iteration;
 uniform vec2 u_resolution;
-uniform float u_timeSec;
 uniform sampler2D u_buffer;
-uniform sampler2D u_textureSeed;
 
 bool initialState(vec2 point) {
-    vec2 uv = mod(point / float(TEXTURE_RES), 1.0);
-    return texture2D(u_textureSeed, uv).r > 0.5;
+    vec2 uv = mod(point / float(SEED_SIZE), 1.0);
+    return texture2D(u_buffer, uv).r > 0.5;
 }
 
 bool readState(vec2 point) {

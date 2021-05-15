@@ -1,5 +1,5 @@
 import basicFragmentSetup from '../../lib/basic-fragment-setup.js';
-import {canvasSize} from '../../lib/utils.js';
+import {fetchText, canvasSize} from '../../lib/utils.js';
 
 (async () => {
 
@@ -23,8 +23,8 @@ import {canvasSize} from '../../lib/utils.js';
   var xStart = targetXStart + targetWidth / 2 - xSize / 2;
   var yStart = targetYStart + targetHeight / 2 - ySize / 2;
 
-  const render = await basicFragmentSetup(
-    'demos/04-mandelbrot-set/fragment-shader.glsl',
+  const setup = basicFragmentSetup(
+    await fetchText('demos/04-mandelbrot-set/fragment-shader.glsl'),
     {
       uniforms: {
         u_viewSize: {
@@ -34,14 +34,14 @@ import {canvasSize} from '../../lib/utils.js';
           value: [xStart, yStart],
         },
       },
-      singleRender: true,
+      autoRender: false,
       width,
       height,
   });
 
-  render.canvas.addEventListener("click", (event) => {
-    const screenX = event.clientX / render.width;
-    const screenY = 1 - event.clientY / render.height;
+  setup.renderer.domElement.addEventListener("click", (event) => {
+    const screenX = event.clientX / setup.width;
+    const screenY = 1 - event.clientY / setup.height;
     const worldX = screenX * xSize + xStart;
     const worldY = screenY * ySize + yStart;
 
@@ -51,10 +51,12 @@ import {canvasSize} from '../../lib/utils.js';
     xStart = worldX - xSize * screenX;
     yStart = worldY - ySize * screenY;
 
-    render.shaderMaterial.uniforms.u_viewSize.value = [xSize, ySize];
-    render.shaderMaterial.uniforms.u_viewStart.value = [xStart, yStart];
+    setup.shaderMaterial.uniforms.u_viewSize.value = [xSize, ySize];
+    setup.shaderMaterial.uniforms.u_viewStart.value = [xStart, yStart];
 
-    render.requestRender();
+    requestAnimationFrame(setup.render);
   });
+
+  requestAnimationFrame(setup.render);
 
 })();
