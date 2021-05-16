@@ -13,17 +13,16 @@
 <body>
   <script>
     async function mainIndex() {
-      const response = await fetch('https://api.github.com/repos/ealang/nature-of-code/contents/demos');
-      const data = await response.json();
+      const demos = await fetch('demos/manifest.json').then(_ => _.json());
 
       const h1 = document.createElement('h1');
       h1.innerText = "Nature of Code Shader Demos"
       document.body.appendChild(h1);
 
       const ul = document.createElement('ul');
-      for (let file of data) {
+      for (let demo of demos) {
         const li = document.createElement('li');
-        li.innerHTML = `<a href="?demo=${file.name}">${file.name}</a></li>`;
+        li.innerHTML = `<a href="?demo=${demo}">${demo}</a></li>`;
         ul.appendChild(li);
       }
       document.body.appendChild(ul);
