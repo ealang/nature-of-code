@@ -9,20 +9,18 @@ const main = async (seedTexture) => {
 
   const [width, height] = canvasSize();
 
-  const fb = frameBuffer(
-    await fetchText("demos/03-game-of-life/update.glsl"),
-    {
-      width,
-      height,
-      uniforms: {
-        u_buffer: { value: seedTexture },
-        u_iteration: { value: 0 },
-      },
-      defines: {
-        SEED_SIZE: 512,
-      },
+  const fb = frameBuffer({
+    fragmentShader: await fetchText("demos/03-game-of-life/update.glsl"),
+    width,
+    height,
+    uniforms: {
+      u_buffer: { value: seedTexture },
+      u_firstRender: { value: false },
     },
-  );
+    defines: {
+      SEED_SIZE: 512,
+    },
+  });
 
   const setup = basicFragmentSetup(
     await fetchText("demos/03-game-of-life/render.glsl"),
@@ -36,13 +34,12 @@ const main = async (seedTexture) => {
     },
   );
 
-  var iteration = 0;
   function render() {
-    fb.shaderMaterial.uniforms.u_iteration.value = iteration++;
     const boardState = fb.render(setup.renderer);
 
     setup.shaderMaterial.uniforms.u_texture.value = boardState;
     setup.render();
+    fb.shaderMaterial.uniforms.u_firstRender.value = false;
 
     setTimeout(() => {
       requestAnimationFrame(render);

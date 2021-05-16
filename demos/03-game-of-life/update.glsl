@@ -1,4 +1,4 @@
-uniform int u_iteration;
+uniform bool u_firstRender;
 uniform vec2 u_resolution;
 uniform sampler2D u_buffer;
 
@@ -51,7 +51,7 @@ void main() {
     vec2 point = vec2(gl_FragCoord);
 
     bool state;
-    if (u_iteration == 0) {
+    if (u_firstRender) {
         state = initialState(point);
     } else {
         state = nextState(point);
