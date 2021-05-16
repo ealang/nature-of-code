@@ -5,5 +5,6 @@
     "03-game-of-life",
     "04-mandelbrot-set",
     "05-gravity-particles",
-    "06-particle-terrain"
+    "06-particle-terrain",
+    "07-curl-noise"
 ]

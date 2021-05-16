@@ -14,7 +14,8 @@ import makeParticles from '../../lib/make-particles.js';
   renderer.setSize(width, height);
   attachRenderer(renderer);
 
-  const camera = makeOrthoCamera(width/height * 2, 2.);
+  const size = Math.min(width, height);
+  const camera = makeOrthoCamera(width/size * 2, height/size * 2);
 
   const fb = frameBuffer({
     fragmentShader: await fetchText("demos/05-gravity-particles/update-fragment.glsl"),
