@@ -4,20 +4,16 @@ import makeParticles from '../../lib/make-particles.js';
 import {fetchText, canvasSize, makeOrthoCamera, attachRenderer} from '../../lib/utils.js';
 
 (async () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const particleFBSize = urlParams.get("buffer") || 512;
+  const particleAlpha = urlParams.get("alpha") || 0.5;
+  const particleSize = urlParams.get("size") || 1;
 
   const [width, height] = canvasSize();
-
   const viewSize = Math.max(width, height);
   const viewWidth = width / viewSize;
   const viewHeight = height / viewSize;
 
-  const camera = makeOrthoCamera(
-    viewWidth,
-    viewHeight,
-    {x: viewWidth / 2, y: viewHeight / 2},
-  );
-
-  const particleFBSize = 512;
   const fbUniforms = {
     u_perlinScale: { value: 0.1 },
     u_perlinChangeRate: { value: 0.1 },
@@ -56,10 +52,18 @@ import {fetchText, canvasSize, makeOrthoCamera, attachRenderer} from '../../lib/
     bufferHeight: particleFBSize,
     uniforms: {
       u_buffer: { value: null },
+      u_alpha: { value: particleAlpha },
+      u_pointSize: { value: particleSize },
     },
     defines: {},
     orbitControls: true,
   });
+
+  const camera = makeOrthoCamera(
+    viewWidth,
+    viewHeight,
+    {x: viewWidth / 2, y: viewHeight / 2},
+  );
 
   const scene = new THREE.Scene();
   scene.add(camera);

@@ -1,10 +1,23 @@
 [
-    "00-hello-world",
-    "01-animated-perlin-noise",
-    "02-gravity",
-    "03-game-of-life",
-    "04-mandelbrot-set",
-    "05-gravity-particles",
-    "06-particle-terrain",
-    "07-curl-noise"
+    { "name": "00-hello-world" },
+    { "name": "01-animated-perlin-noise" },
+    { "name": "02-gravity" },
+    { "name": "03-game-of-life" },
+    { "name": "04-mandelbrot-set" },
+    { "name": "05-gravity-particles" },
+    { "name": "06-particle-terrain" },
+    {
+        "name": "07-curl-noise",
+        "paramsStr": "buffer=512&alpha=0.5&size=1",
+        "variants": [
+            {
+                "name": "1M particles",
+                "paramsStr": "buffer=1024&alpha=0.35&size=1"
+            },
+            {
+                "name": "4M particles",
+                "paramsStr": "buffer=2048&alpha=0.15&size=1"
+            }
+        ]
+    }
 ]

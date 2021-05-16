@@ -22,7 +22,16 @@
       const ul = document.createElement('ul');
       for (let demo of demos) {
         const li = document.createElement('li');
-        li.innerHTML = `<a href="?demo=${demo}">${demo}</a></li>`;
+        var variantLinks = [];
+        if (demo.variants) {
+          for (let variant of demo.variants) {
+            variantLinks.push(
+              `(<a href="?demo=${demo.name}&${variant.paramsStr}">${variant.name}</a>)`
+            );
+          }
+        }
+
+        li.innerHTML = `<a href="?demo=${demo.name}&${demo.paramsStr || ''}">${demo.name}</a> ${variantLinks.join(" ")}`;
         ul.appendChild(li);
       }
       document.body.appendChild(ul);
