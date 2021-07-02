@@ -19,5 +19,6 @@
                 "paramsStr": "buffer=2048&alpha=0.15&size=1"
             }
         ]
-    }
+    },
+    { "name": "08-cellular-automata" }
 ]
