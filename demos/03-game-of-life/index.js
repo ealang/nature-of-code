@@ -15,7 +15,6 @@ const main = async (seedTexture) => {
     height,
     uniforms: {
       u_buffer: { value: seedTexture },
-      u_firstRender: { value: false },
     },
     defines: {
       SEED_SIZE: 512,
@@ -39,7 +38,6 @@ const main = async (seedTexture) => {
 
     setup.shaderMaterial.uniforms.u_texture.value = boardState;
     setup.render();
-    fb.shaderMaterial.uniforms.u_firstRender.value = false;
 
     setTimeout(() => {
       requestAnimationFrame(render);

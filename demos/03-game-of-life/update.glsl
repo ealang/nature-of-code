@@ -1,11 +1,5 @@
-uniform bool u_firstRender;
 uniform vec2 u_resolution;
 uniform sampler2D u_buffer;
-
-bool initialState(vec2 point) {
-    vec2 uv = mod(point / float(SEED_SIZE), 1.0);
-    return texture2D(u_buffer, uv).r > 0.5;
-}
 
 bool readState(vec2 point) {
     vec2 uv = mod(point / u_resolution, 1.0);
@@ -47,15 +41,8 @@ bool nextState(vec2 point) {
 }
 
 void main() {
-
     vec2 point = vec2(gl_FragCoord);
-
-    bool state;
-    if (u_firstRender) {
-        state = initialState(point);
-    } else {
-        state = nextState(point);
-    }
+    bool state = nextState(point);
 
     gl_FragColor = encodeValue(state);
 }

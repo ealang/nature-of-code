@@ -56,7 +56,6 @@ import {fetchText, canvasSize, makeOrthoCamera, attachRenderer} from '../../lib/
       u_pointSize: { value: particleSize },
     },
     defines: {},
-    orbitControls: true,
   });
 
   const camera = makeOrthoCamera(
@@ -84,11 +83,11 @@ import {fetchText, canvasSize, makeOrthoCamera, attachRenderer} from '../../lib/
     fb.shaderMaterial.uniforms.u_timeDeltaSec.value = deltaTime;
     fb.shaderMaterial.uniforms.u_timeSec.value = curTime;
     const particleState = fb.render(renderer);
+    fb.shaderMaterial.uniforms.u_firstRender.value = false;
 
     // render particles
     particles.shaderMaterial.uniforms.u_buffer.value = particleState;
     renderer.render(scene, camera);
-    fb.shaderMaterial.uniforms.u_firstRender.value = false;
 
     requestAnimationFrame(render);
   };
