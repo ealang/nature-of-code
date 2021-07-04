@@ -4,7 +4,7 @@
 #include <memory.h>
 #include <stdlib.h>
 
-#define FIELD_SIZE_BITS 6
+#define FIELD_SIZE_BITS 7
 #define FIELD_SIZE (1 << FIELD_SIZE_BITS)
 #define FIELD_ARRAY_B ((FIELD_SIZE * FIELD_SIZE) >> 3)
 #define MAX_NUM_ITER 10000
@@ -55,13 +55,17 @@ void print_board(const char *board) {
 
 int board_is_trivial(const char *board, const char *board2) {
     int v = board[0];
-    int all_m = board[0] == board2[0];
+    int is_static = board[0] == board2[0];
+    int trivial = 1;
+
     for (int i = 1; i < FIELD_ARRAY_B; ++i) {
         if (board[i] != board2[i]) {
-            all_m = 0;
-
+            is_static = 0;
         }
-        if (!all_m && board[i] != v) {
+        if (board[i] != v) {
+            trivial = 0;
+        }
+        if (!trivial && !is_static) {
             return 0;
         }
     }
@@ -119,7 +123,7 @@ int run_rule(const char *init_board, uint32_t rule_num, int log) {
     }
     free(board1);
     free(board2);
-    if (i == MAX_NUM_ITER) {
+    if (i == MAX_NUM_ITER && log) {
         print_board(board1);
     }
     return i;
@@ -136,7 +140,7 @@ uint32_t rand32() {
     return i;
 }
 
-void main_search() {
+int main() {
     const char *board = initial_board();
 
     int i;
@@ -151,17 +155,6 @@ void main_search() {
             printf("%d\n", i);
         }
     }
-}
 
-void main_render() {
-    char *board = initial_board();
-    uint32_t rule = 1;//35323459;//-218373306;
-    run_rule(board, rule, 1);
-}
-
-int main() {
-
-    main_render();
-    //main_search();
     return 0;
 }

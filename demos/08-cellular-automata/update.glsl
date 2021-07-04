@@ -1,9 +1,18 @@
 uniform bool u_firstRender;
 uniform vec2 u_resolution;
 uniform sampler2D u_buffer;
+uniform int u_ruleNum;
+uniform float u_circleRad;
+
+struct DrawBrush {
+  vec2 position;
+  float radius;
+};
+
+uniform DrawBrush u_drawBrush;
 
 int initialState(vec2 point) {
-    if (length(point - u_resolution / 2.) < 20.) {
+    if (length(point - u_resolution / 2.) < u_circleRad) {
         return 1;
     }
     return 0;
@@ -28,17 +37,17 @@ int nextState(vec2 point) {
     int b4 = readState(point - vec2(1., 0.));
     int b5 = readState(point - vec2(0., 1.));
 
-    int rule_num = -218373306;
     int lookup = b1 | (b2 << 1) | (b3 << 2) | (b4 << 3) | (b5 << 4);
-    return (rule_num & (1 << lookup)) == 0 ? 0 : 1;
+    return (u_ruleNum & (1 << lookup)) == 0 ? 0 : 1;
 }
 
 void main() {
-
     vec2 point = vec2(gl_FragCoord);
 
     int state;
-    if (u_firstRender) {
+    if (length(point - u_drawBrush.position) < u_drawBrush.radius) {
+        state = 1 - readState(point);
+    } else if (u_firstRender) {
         state = initialState(point);
     } else {
         state = nextState(point);
