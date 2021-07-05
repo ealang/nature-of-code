@@ -1,22 +1,15 @@
-uniform bool u_firstRender;
 uniform vec2 u_resolution;
 uniform sampler2D u_buffer;
 uniform int u_ruleNum;
-uniform float u_circleRad;
 
 struct DrawBrush {
   vec2 position;
   float radius;
+  int mode;
+  int backgroundValue;
 };
 
 uniform DrawBrush u_drawBrush;
-
-int initialState(vec2 point) {
-    if (length(point - u_resolution / 2.) < u_circleRad) {
-        return 1;
-    }
-    return 0;
-}
 
 int readState(vec2 point) {
     vec2 uv = point / u_resolution;
@@ -46,11 +39,17 @@ void main() {
 
     int state;
     if (length(point - u_drawBrush.position) < u_drawBrush.radius) {
-        state = 1 - readState(point);
-    } else if (u_firstRender) {
-        state = initialState(point);
+        if (u_drawBrush.mode == -1) {
+            state = 1 - readState(point);
+        } else {
+            state = u_drawBrush.mode;
+        }
     } else {
-        state = nextState(point);
+        if (u_drawBrush.backgroundValue == -1) {
+            state = nextState(point);
+        } else {
+            state = u_drawBrush.backgroundValue;
+        }
     }
 
     gl_FragColor = encodeValue(state);
